@@ -1,0 +1,15 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: api-driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  redis:
+    host: 192.168.127.132
+    port: 6379
+    database: 0
+

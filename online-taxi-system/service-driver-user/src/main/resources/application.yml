@@ -1,0 +1,29 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: service-driver-user
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/service-driver-user?characterEncodion=utf-8&serverTimezone=UTC
+    username: root
+    password: 52yt1314
+#  redis:
+#    host: 192.168.127.132
+#    port: 6379
+#    database: 0
+
+logging:
+  level:
+    com:
+      baomidou:
+        mybatisplus: debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/*.xml

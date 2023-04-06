@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: service-map
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/service-map?characterEncodion=utf-8&serverTimezone=UTC
+    username: root
+    password: 52yt1314
+  redis:
+    host: 192.168.127.132
+    port: 6379
+    database: 0
+
+server:
+  port: 8085
+
+#自定义key value
+amap:
+  key: 9c53de06bbaf950a69100bc476c21745
+  sid: 896418
+
