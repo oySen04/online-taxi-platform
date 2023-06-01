@@ -28,8 +28,6 @@ public class VerificationCodeService {
     @Autowired
     private ServicePassengerUserClient servicePassengerUserClient;
 
-
-
     /**
      * 生成验证码
      * @param passengerPhone 手机号

@@ -42,12 +42,14 @@ public class TokenService {
 
         String accessTokenKey = RedisPrefixUtils.generatorTokenKey(phone,identity,TokenConstants.ACCESS_TOKEN_TYPE);
 
+        //token保存天数
         stringRedisTemplate.opsForValue().set(accessTokenKey, accessToken ,30, TimeUnit.DAYS);
         stringRedisTemplate.opsForValue().set(refreshTokenKey, refreshToken ,31,TimeUnit.DAYS);
 
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setRefreshToken(refreshToken);
         tokenResponse.setAccessToken(accessToken);
+
         return ResponseResult.success(tokenResponse);
     }
 }

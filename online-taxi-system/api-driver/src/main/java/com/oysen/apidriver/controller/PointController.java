@@ -19,7 +19,6 @@ public class PointController {
 
     @PostMapping("/upload")
     public ResponseResult upload(@RequestBody ApiDriverPointRequest apiDriverPointRequest){
-
         return pointService.upload(apiDriverPointRequest);
     }
 }

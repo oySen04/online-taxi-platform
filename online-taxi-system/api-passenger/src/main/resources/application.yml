@@ -9,6 +9,6 @@ spring:
   application:
     name: api-passenger
   redis:
-    host: 192.168.127.132
+    host: 192.168.127.137
     port: 6379
     database: 0

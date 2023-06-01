@@ -10,6 +10,7 @@ import com.oysen.internalcommon.dto.PriceRule;
 import com.oysen.internalcommon.dto.ResponseResult;
 import com.oysen.internalcommon.request.OrderRequest;
 import com.oysen.internalcommon.request.PriceRuleIsNewRequest;
+import com.oysen.internalcommon.request.PushRequest;
 import com.oysen.internalcommon.responese.OrderDriverResponse;
 import com.oysen.internalcommon.responese.TerminalResponse;
 import com.oysen.internalcommon.util.RedisPrefixUtils;
@@ -115,12 +116,13 @@ public class OrderInfoService {
                 break;
             }
             if (i == 5) {
+                //订单无效
                 orderInfo.setOrderStatus(OrderConstants.ORDER_INVALID);
                 orderInfoMapper.updateById(orderInfo);
             }else {
                 //等待20秒
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(2);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -185,6 +187,7 @@ public class OrderInfoService {
                     String vehicleNo = orderDriverResponse.getVehicleNo();
                     String vehicleTypeFromCar = orderDriverResponse.getVehicleType();
 
+                    // 判断车辆的车型是否符合
                     String vehicleType = orderInfo.getVehicleType();
                     if (!vehicleType.trim().equals(vehicleTypeFromCar.trim())) {
                         System.out.println("车辆类型不符合");
@@ -203,6 +206,7 @@ public class OrderInfoService {
                         //订单直接匹配司机
                         //查询当前车辆信息
                         QueryWrapper<Car> carQueryWrapper = new QueryWrapper<>();
+                        carQueryWrapper.eq("id",carId);
 
                         //查询当前司机信息
                         orderInfo.setDriverId(driverId);
@@ -232,7 +236,13 @@ public class OrderInfoService {
                     driverContent.put("destLongitude",orderInfo.getDestLongitude());
                     driverContent.put("destLatitude",orderInfo.getDestLatitude());
 
-                    serviceSsePushClient.push(driverId, IdentityConstants.DRIVER_IDENTITY,driverContent.toString());
+                    PushRequest pushRequest = new PushRequest();
+                    pushRequest.setUserId(driverId);
+                    pushRequest.setIdentity(IdentityConstants.DRIVER_IDENTITY);
+                    pushRequest.setContent(driverContent.toString());
+                    serviceSsePushClient.push(pushRequest);
+
+                    //serviceSsePushClient.push(driverId, IdentityConstants.DRIVER_IDENTITY,driverContent.toString());
 
                     //通知乘客
                     JSONObject passengerContent = new JSONObject();
@@ -250,8 +260,16 @@ public class OrderInfoService {
 
                     passengerContent.put("receiveOrderCarLongitude",orderInfo.getReceiveOrderCarLongitude());
                     passengerContent.put("receiveOrderCarLatitude",orderInfo.getReceiveOrderCarLatitude());
-//                    passengerContent.put("destLatitude",orderInfo.getDestLatitude());
-                    serviceSsePushClient.push(orderInfo.getPassengerId(), IdentityConstants.PASSENGER_IDENTITY,passengerContent.toString());
+//                  passengerContent.put("destLatitude",orderInfo.getDestLatitude());
+
+
+                    PushRequest pushRequest1 = new PushRequest();
+                    pushRequest1.setUserId(orderInfo.getPassengerId());
+                    pushRequest1.setIdentity(IdentityConstants.PASSENGER_IDENTITY);
+                    pushRequest1.setContent(passengerContent.toString());
+
+                    serviceSsePushClient.push(pushRequest1);
+                    //serviceSsePushClient.push(orderInfo.getPassengerId(), IdentityConstants.PASSENGER_IDENTITY,passengerContent.toString());
                     result = 1;
                         lock.unlock();
                         //退出,不在进行司机的查找
@@ -349,7 +367,7 @@ public class OrderInfoService {
      * @return
      */
     private Long isDriverOrderGoingon(Long driverId) {
-        //判断有正在进行的订单不允许下单
+        //判断有正在进行的订单不允许接单
         QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("driver_id",driverId);
         queryWrapper.and(orderRequestQueryWrapper -> orderRequestQueryWrapper.eq("order_status",OrderConstants.DRIVER_RECEIVE_ORDER)
@@ -451,16 +469,17 @@ public class OrderInfoService {
         long endtime = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
         System.out.println("开始时间:" + starttime);
         System.out.println("结束时间:" + endtime);
+
         ResponseResult<TerminalResponse> trsearch = serviceMapClient.trsearch(carById.getData().getTid(),starttime , endtime);
         TerminalResponse data = trsearch.getData();
         Long driveMile = data.getDriveMile();
         Long driveTime = data.getDriveTime();
         orderInfo.setDriveMile(driveMile);
         orderInfo.setDriveTime(driveTime);
-
+        //获取价格
         String address = orderInfo.getAddress();
         String vehicleType = orderInfo.getVehicleType();
-        //获取价格
+
         ResponseResult<Double> doubleResponseResult = servicePriceClient.calculatePrice(driveMile.intValue(), driveTime.intValue(), address, vehicleType);
         Double price = doubleResponseResult.getData();
         orderInfo.setPrice(price);
@@ -469,6 +488,11 @@ public class OrderInfoService {
         return ResponseResult.success();
     }
 
+    /**
+     * 支付
+     * @param orderRequest
+     * @return
+     */
     public ResponseResult pay(OrderRequest orderRequest) {
         Long orderId = orderRequest.getOrderId();
         OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
@@ -564,5 +588,52 @@ public class OrderInfoService {
 
         orderInfoMapper.updateById(orderInfo);
         return ResponseResult.success();
+    }
+
+    public ResponseResult pushPayInfo(OrderRequest orderRequest) {
+
+        Long orderId = orderRequest.getOrderId();
+
+        OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
+        orderInfo.setOrderStatus(OrderConstants.TO_START_PAY);
+        orderInfoMapper.updateById(orderInfo);
+        return ResponseResult.success();
+
+    }
+
+    public ResponseResult<OrderInfo> detail(Long orderId){
+        OrderInfo orderInfo =  orderInfoMapper.selectById(orderId);
+        return ResponseResult.success(orderInfo);
+    }
+
+
+    public ResponseResult<OrderInfo> current(String phone, String identity){
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+
+        if (identity.equals(IdentityConstants.DRIVER_IDENTITY)){
+            queryWrapper.eq("driver_phone",phone);
+
+            queryWrapper.and(wrapper->wrapper
+                    .eq("order_status",OrderConstants.DRIVER_RECEIVE_ORDER)
+                    .or().eq("order_status",OrderConstants.DRIVER_TO_PICK_UP_PASSENGER)
+                    .or().eq("order_status",OrderConstants.DRIVER_ARRIVED_DEPARTURE)
+                    .or().eq("order_status",OrderConstants.PICK_UP_PASSENGER)
+
+            );
+        }
+        if (identity.equals(IdentityConstants.PASSENGER_IDENTITY)){
+            queryWrapper.eq("passenger_phone",phone);
+            queryWrapper.and(wrapper->wrapper.eq("order_status",OrderConstants.ORDER_START)
+                    .or().eq("order_status",OrderConstants.DRIVER_RECEIVE_ORDER)
+                    .or().eq("order_status",OrderConstants.DRIVER_TO_PICK_UP_PASSENGER)
+                    .or().eq("order_status",OrderConstants.DRIVER_ARRIVED_DEPARTURE)
+                    .or().eq("order_status",OrderConstants.PICK_UP_PASSENGER)
+                    .or().eq("order_status",OrderConstants.PASSENGER_GETOFF)
+                    .or().eq("order_status",OrderConstants.TO_START_PAY)
+            );
+        }
+
+        OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper);
+        return ResponseResult.success(orderInfo);
     }
 }

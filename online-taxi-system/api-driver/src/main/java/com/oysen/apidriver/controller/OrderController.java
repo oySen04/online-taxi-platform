@@ -1,10 +1,17 @@
 package com.oysen.apidriver.controller;
 
 import com.oysen.apidriver.service.ApiDriverOrderInfoService;
+import com.oysen.internalcommon.constant.CommonStatusEnum;
+import com.oysen.internalcommon.constant.IdentityConstants;
+import com.oysen.internalcommon.dto.OrderInfo;
 import com.oysen.internalcommon.dto.ResponseResult;
+import com.oysen.internalcommon.dto.TokenResult;
 import com.oysen.internalcommon.request.OrderRequest;
+import com.oysen.internalcommon.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/order")
@@ -13,7 +20,7 @@ public class OrderController {
     @Autowired
     private ApiDriverOrderInfoService apiDriverOrderInfoService;
     /**
-     * 去接乘客
+     * 司机去接乘客
      * @param orderRequest
      * @return
      */
@@ -23,7 +30,7 @@ public class OrderController {
     }
 
     /**
-     * 到达乘客上车地点
+     * 车辆到达乘客上车地点
      * @param orderRequest
      * @return
      */
@@ -55,5 +62,22 @@ public class OrderController {
     @PostMapping("/cancel")
     public ResponseResult cacenl(@RequestParam Long orderId) {
         return apiDriverOrderInfoService.cacenl(orderId);
+    }
+
+    @GetMapping("/datail")
+    public ResponseResult<OrderInfo> detail(Long orderId) {
+        return apiDriverOrderInfoService.detail(orderId);
+    }
+
+    @GetMapping("/current")
+   public ResponseResult<OrderInfo> currentOrder(HttpServletRequest httpServletRequest) {
+        String authorization = httpServletRequest.getHeader("Authorization");
+        TokenResult tokenResult = JwtUtils.parseToken(authorization);
+        String identity = tokenResult.getIdentity();
+        if (!identity.equals(IdentityConstants.DRIVER_IDENTITY)) {
+            return ResponseResult.fail(CommonStatusEnum.TOKEN_ERROR.getCode(),CommonStatusEnum.TOKEN_ERROR.getValue());
+        }
+        String phone = tokenResult.getPhone();
+        return apiDriverOrderInfoService.currentOrder(phone,IdentityConstants.DRIVER_IDENTITY);
     }
 }

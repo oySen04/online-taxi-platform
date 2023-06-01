@@ -24,7 +24,11 @@ public class UserService {
     }
 
     public ResponseResult<DriverCarBindingRelationship> getDriverCarBindingRelationship(String driverPhone) {
-
+        // 根据driverPhone查询司机信息
         return serviceDriverUserClient.getDriverCarBindingRelationship(driverPhone);
+    }
+
+    public ResponseResult<DriverUserWorkStatus> getWorkStatus(Long driverId){
+        return serviceDriverUserClient.getWorkStatus(driverId);
     }
 }

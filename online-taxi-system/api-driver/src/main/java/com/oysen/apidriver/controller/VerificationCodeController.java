@@ -17,7 +17,7 @@ public class VerificationCodeController {
     @Autowired
     private VerificationCodeService verificationCodeService;
 
-    @GetMapping("/verification-code")
+    @PostMapping("/verification-code")
     public ResponseResult verificationCode(@RequestBody VerificationCodeDTO verificationCodeDTO) {
 
         String driverPhone = verificationCodeDTO.getDriverPhone();

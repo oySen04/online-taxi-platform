@@ -20,7 +20,7 @@ public class DriverUserController {
     private CarService carService;
 
     /**
-     * 添加信息
+     * 添加司机信息
      * @param driverUser
      * @return
      */
@@ -30,7 +30,7 @@ public class DriverUserController {
     }
 
     /**
-     * 修改信息
+     * 修改司机信息
      * @param driverUser
      * @return
      */
@@ -41,7 +41,6 @@ public class DriverUserController {
 
     @PostMapping("/car")
     public ResponseResult addCar(@RequestBody Car car) {
-
         return carService.addCar(car);
     }
 }

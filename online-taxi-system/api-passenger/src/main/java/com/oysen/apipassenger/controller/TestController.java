@@ -43,6 +43,7 @@ public class TestController {
      * @param orderId
      * @return
      */
+    @GetMapping("/test-real-time-order/{orderId}")
     public String dispatchRealTimeOrder(@PathVariable("orderId") Long orderId) {
 
         System.out.println("并发压力测试" + orderId);

@@ -34,7 +34,6 @@ public class DriverCarBindingRelationshipService {
     }
 
     public ResponseResult unbind(DriverCarBindingRelationship driverCarBindingRelationship) {
-
         return serviceDriverUserClient.unbind(driverCarBindingRelationship);
     }
 }

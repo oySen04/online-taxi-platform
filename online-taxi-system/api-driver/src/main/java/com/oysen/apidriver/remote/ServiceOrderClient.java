@@ -1,13 +1,11 @@
 package com.oysen.apidriver.remote;
 
 import com.fasterxml.jackson.databind.node.POJONode;
+import com.oysen.internalcommon.dto.OrderInfo;
 import com.oysen.internalcommon.dto.ResponseResult;
 import com.oysen.internalcommon.request.OrderRequest;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient("service-order")
 public interface ServiceOrderClient {
@@ -26,4 +24,14 @@ public interface ServiceOrderClient {
 
     @RequestMapping(method = RequestMethod.POST,value = "/oeder/cancel")
     public ResponseResult cancel(@RequestParam Long orderId, @RequestParam String identity);
+
+    @PostMapping("/order/push-pay-info")
+    public ResponseResult pushPayInfo(@RequestBody OrderRequest orderRequest);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/order/detail")
+    public ResponseResult<OrderInfo> detail(@RequestParam Long orderId);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/order/current")
+    public ResponseResult current(@RequestParam String phone ,@RequestParam String identity);
+
 }

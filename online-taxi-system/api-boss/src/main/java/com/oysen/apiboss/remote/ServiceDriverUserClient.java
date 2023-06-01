@@ -26,5 +26,6 @@ public interface ServiceDriverUserClient {
     public ResponseResult bind(@RequestBody DriverCarBindingRelationship driverCarBindingRelationship);
 
     @RequestMapping(method = RequestMethod.POST,value = "/driver-car-binding-relationship/unbind")
-    public ResponseResult unbind(@RequestBody DriverCarBindingRelationship driverCarBindingRelationship);
+    public ResponseResult unbind(DriverCarBindingRelationship driverCarBindingRelationship);
+    //public ResponseResult unbind(@RequestBody DriverCarBindingRelationship driverCarBindingRelationship);
 }

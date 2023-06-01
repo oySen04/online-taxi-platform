@@ -32,35 +32,34 @@ public class DriverUserWorkStatus implements Serializable {
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
+
     public Long getDriverId() {
         return driverId;
     }
-
     public void setDriverId(Long driverId) {
         this.driverId = driverId;
     }
+
     public Integer getWorkStatus() {
         return workStatus;
     }
-
     public void setWorkStatus(Integer workStatus) {
         this.workStatus = workStatus;
     }
+
     public LocalDateTime getGmtCreate() {
         return gmtCreate;
     }
-
     public void setGmtCreate(LocalDateTime gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
+
     public LocalDateTime getGmtModified() {
         return gmtModified;
     }
-
     public void setGmtModified(LocalDateTime gmtModified) {
         this.gmtModified = gmtModified;
     }

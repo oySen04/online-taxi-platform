@@ -38,4 +38,12 @@ public class DriverUserWorkStatusService {
         return ResponseResult.success("");
     }
 
+    public ResponseResult<DriverUserWorkStatus> getWorkStatus(Long driverId) {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("driver_id",driverId);
+        List<DriverUserWorkStatus> driverUserWorkStatuses = driverUserWorkStatusMapper.selectByMap(queryMap);
+        DriverUserWorkStatus driverUserWorkStatus = driverUserWorkStatuses.get(0);
+
+        return ResponseResult.success(driverUserWorkStatus);
+    }
 }

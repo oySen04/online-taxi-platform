@@ -1,15 +1,13 @@
 package com.oysen.serviceorder.controller;
 
 import com.oysen.internalcommon.constant.HeaderParamConstants;
+import com.oysen.internalcommon.dto.OrderInfo;
 import com.oysen.internalcommon.dto.ResponseResult;
 import com.oysen.internalcommon.request.OrderRequest;
 import com.oysen.serviceorder.service.OrderInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,6 +33,15 @@ public class OrderInfoController {
 
     }
 
+    /**
+     * 订单详情
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/detail")
+    public ResponseResult<OrderInfo> detail(Long orderId){
+        return orderInfoService.detail(orderId);
+    }
     /**
      * 去接乘客
      * @param orderRequest
@@ -94,5 +101,10 @@ public class OrderInfoController {
     @PostMapping("/cancel")
     public ResponseResult cancel(Long orderId, String identity) {
         return orderInfoService.cancel(orderId, identity);
+    }
+
+    @GetMapping("/current")
+    public ResponseResult current(String phone , String identity){
+        return orderInfoService.current(phone , identity);
     }
 }
