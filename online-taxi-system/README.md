@@ -25,20 +25,26 @@
    daemonize no 改为 daemonize yes
    ```
 
-2. service-map调用高德地图web服务api，需要自己申请高德地图web服务api的key，然后生成sid
+2. service-driver-user库创建视图代码
+
+   ```sql
+   select `t1`.`id` AS `driver_id`,`t1`.`address` AS `city_code`,`t2`.`work_status` AS `work_status` from (`driver_user` `t1` left join `driver_user_work_status` `t2` on((`t1`.`id` = `t2`.`driver_id`)))
+   ```
+
+3. service-map调用高德地图web服务api，需要自己申请高德地图web服务api的key，然后生成sid
 
    + 后续看情况增加百度地图和腾讯地图web服务的调用以优化路径
 
-3. 本项目接口测试工具是apifox，想要了解项目接口详细信息可以点击此链接
+4. 本项目接口测试工具是apifox，想要了解项目接口详细信息可以点击此链接
 
    + 【Apifox】欧ིྀ⃮⃖ͯ⃠⃕阳ིྀ⃮⃖ͯ⃠⃕邀请你加入懒洋出行 https://app.apifox.com/invite?token=w7Sk4Su53V45ysP86zA9x
    + 如链接提示过期请联系QQ：1746595240 ，并做好备注
 
-4. 项目跨域调用都是使用openfeign调用
+5. 项目跨域调用都是使用openfeign调用
 
-5. 目前项目还没有密码功能，在追加中
+6. 目前项目还没有密码功能，在追加中
 
-6. 
+7. 
 
 #### 项目目录结构
 

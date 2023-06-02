@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface ServiceVerificationCodeClient {
 
     @RequestMapping(method = RequestMethod.GET,value = "/numberCode/{size}")
-    public ResponseResult<NumberCodeResponse> getVerificationCode(@PathVariable("size") int size);
+    public ResponseResult<NumberCodeResponse> getNumberCode(@PathVariable("size") int size);
 }

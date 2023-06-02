@@ -90,7 +90,7 @@ public class Car implements Serializable {
     private String transAgency;
 
     /**
-     * 车辆经验区域
+     * 车辆经营区域
      */
     private String transArea;
 

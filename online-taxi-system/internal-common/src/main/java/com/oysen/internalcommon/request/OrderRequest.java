@@ -14,17 +14,22 @@ public class OrderRequest {
     private String passengerPhone;
 
     private String address;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String departTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String orderTime;
+
     private String departure;
     private String depLongitude;
     private String depLatitude;
+
     private String destination;
     private String desLongitude;
     private String desLatitude;
-    private String encrypt;
+
+    private Integer encrypt;
+
     private String fareType;
     private String vehicleType;
     //运价版本

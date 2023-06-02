@@ -180,6 +180,7 @@ public class OrderInfoService {
                     continue ;
                 }else {
                     log.info("找到车辆id:"+ carId + "对应可用司机");
+
                     OrderDriverResponse orderDriverResponse = availableDriver.getData();
                     Long driverId = orderDriverResponse.getDriverId();
                     String driverPhone = orderDriverResponse.getDriverPhone();
@@ -225,6 +226,7 @@ public class OrderInfoService {
 
                         //通知司机
                     JSONObject driverContent = new JSONObject();
+
                     driverContent.put("orderId",orderInfo.getId());
                     driverContent.put("passengerId",orderInfo.getPassengerId());
                     driverContent.put("passengerPhone",orderInfo.getPassengerPhone());
@@ -240,6 +242,7 @@ public class OrderInfoService {
                     pushRequest.setUserId(driverId);
                     pushRequest.setIdentity(IdentityConstants.DRIVER_IDENTITY);
                     pushRequest.setContent(driverContent.toString());
+
                     serviceSsePushClient.push(pushRequest);
 
                     //serviceSsePushClient.push(driverId, IdentityConstants.DRIVER_IDENTITY,driverContent.toString());
@@ -504,7 +507,7 @@ public class OrderInfoService {
     /**
      * 取消订单
      * @param orderId
-     * @param identity
+     * @param identity 身份
      * @return
      */
     public ResponseResult cancel(Long orderId, String identity) {

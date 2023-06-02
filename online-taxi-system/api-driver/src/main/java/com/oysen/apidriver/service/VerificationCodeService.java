@@ -42,7 +42,7 @@ public class VerificationCodeService {
         }
         log.info(driverPhone + "的司机存在");
         //获取验证码
-        ResponseResult<NumberCodeResponse> verificationCodeResult = serviceVerificationCodeClient.getVerificationCode(6);
+        ResponseResult<NumberCodeResponse> verificationCodeResult = serviceVerificationCodeClient.getNumberCode(6);
         NumberCodeResponse numberCodeResponse = verificationCodeResult.getData();
         int numberCode = numberCodeResponse.getNumberCode();
         log.info("验证码:" + numberCode);

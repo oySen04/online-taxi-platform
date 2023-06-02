@@ -42,6 +42,7 @@ public class OrderInfoController {
     public ResponseResult<OrderInfo> detail(Long orderId){
         return orderInfoService.detail(orderId);
     }
+
     /**
      * 去接乘客
      * @param orderRequest
@@ -80,6 +81,16 @@ public class OrderInfoController {
     @PostMapping("/passenger-getoff")
     public ResponseResult passengerGetoff(@RequestBody OrderRequest orderRequest) {
         return orderInfoService.passengerGetoff(orderRequest);
+    }
+
+    /**
+     * 司机发起收款
+     * @param orderRequest
+     * @return
+     */
+    @PostMapping("/push-pay-info")
+    public ResponseResult pushPayInfo(@RequestBody OrderRequest orderRequest){
+        return orderInfoService.pushPayInfo(orderRequest);
     }
 
     /**
